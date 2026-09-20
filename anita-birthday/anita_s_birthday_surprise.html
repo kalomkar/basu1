@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Anita! 💕</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome for cute icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Confetti JS -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        pastel: {
+                            pink: '#ffb5e8',
+                            purple: '#dcd0ff',
+                            blue: '#b2fef7',
+                            peach: '#ffdfba',
+                            cream: '#fff5ee'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-15px) rotate(3deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 15px rgba(255, 181, 232, 0.6))' },
+                            '50%': { filter: 'drop-shadow(0 0 30px rgba(220, 208, 255, 0.9))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom smooth scrollbar & background reset */
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2b104a 50%, #1f0d3d 100%);
+            color: #fce7f3;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Glassmorphism utility */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 181, 232, 0.4);
+            box-shadow: 0 30px 60px rgba(255, 181, 232, 0.2);
+        }
+
+        /* Glowing Text Utility */
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 181, 232, 0.6), 0 0 40px rgba(220, 208, 255, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 181, 232, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 181, 232, 0.6);
+        }
+
+        /* Floating background particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Hide scrollbar for clean multi-page feel */
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem 1rem;
+        }
+    </style>
+</head>
+<body class="relative selection:bg-pink-300 selection:text-purple-900">
+
+    <!-- AUDIO SETUP: 
+         To play custom music, place your audio file in the project folder (e.g., audio/birthday.mp3) 
+         and update the src attribute below. 
+    -->
+    <audio id="bgMusic" loop>
+        <source src="audio/birthday.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Floating Audio Control Button -->
+    <div class="fixed top-6 right-6 z-50">
+        <button id="musicToggleBtn" onclick="toggleMusic()" class="glass-card px-4 py-3 rounded-full flex items-center gap-3 text-pink-200 hover:text-white transition-all duration-300 shadow-lg group">
+            <div class="w-8 h-8 rounded-full bg-pink-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i id="musicIcon" class="fa-solid fa-music text-sm animate-bounce"></i>
+            </div>
+            <span id="musicText" class="text-sm font-medium pr-1">Play Music</span>
+        </button>
+    </div>
+
+    <!-- Floating Background Particles Container -->
+    <div id="particlesContainer" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Navigation Dots for 7 Sections -->
+    <div class="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col gap-3">
+        <button onclick="goToSection(1)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Welcome"></button>
+        <button onclick="goToSection(2)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Reveal"></button>
+        <button onclick="goToSection(3)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Message"></button>
+        <button onclick="goToSection(4)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Memories"></button>
+        <button onclick="goToSection(5)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Wishes"></button>
+        <button onclick="goToSection(6)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Why You're Special"></button>
+        <button onclick="goToSection(7)" class="nav-dot w-3 h-3 rounded-full bg-white/30 hover:bg-pink-300 transition-all duration-300" title="Final Surprise"></button>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main id="mainContent" class="relative z-10 w-full">
+
+        <!-- ==========================================
+             PAGE 1 — WELCOME SECTION
+             ========================================== -->
+        <section id="section1" class="page-container text-center">
+            <div class="max-w-2xl mx-auto px-4">
+                <div class="inline-block mb-6 px-6 py-2 rounded-full glass-card text-pink-300 text-sm tracking-widest uppercase animate-pulse">
+                    ✨ Special Birthday Experience ✨
+                </div>
+                <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6 glow-text text-white">
+                    Hey Anita... <span class="inline-block animate-bounce">💕</span>
+                </h1>
+                
+                <p id="welcomeTyping" class="text-xl md:text-2xl text-pink-100 font-light mb-4 min-h-[4rem] flex items-center justify-center">
+                    <!-- Typing effect container -->
+                </p>
+
+                <p class="text-lg md:text-xl text-purple-200/80 mb-10 font-light">
+                    Because today isn't just another day... it's a day to celebrate YOU. ✨
+                </p>
+
+                <button onclick="nextSection()" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold text-lg shadow-xl hover:shadow-pink-500/50 hover:scale-105 active:scale-95 transition-all duration-300">
+                    <span>Open Your Surprise</span>
+                    <i class="fa-solid fa-sparkles group-hover:rotate-45 transition-transform duration-300"></i>
+                </button>
+            </div>
+            
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-white/50 text-sm flex flex-col items-center gap-1 cursor-pointer" onclick="nextSection()">
+                <span>Scroll down</span>
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 2 — BIRTHDAY REVEAL
+             ========================================== -->
+        <section id="section2" class="page-container text-center">
+            <div class="max-w-3xl mx-auto px-4">
+                <p class="text-pink-300 text-lg md:text-xl tracking-widest uppercase mb-4 font-light animate-fade">
+                    Wait for it... 👀
+                </p>
+
+                <div class="my-6">
+                    <h2 class="text-4xl md:text-6xl font-serif font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-purple-200 to-pink-400 mb-2 glow-text">
+                        HAPPY BIRTHDAY
+                    </h2>
+                    <h1 class="text-6xl md:text-8xl font-serif font-extrabold text-white glow-text tracking-wider mt-2">
+                        ANITA <span class="inline-block animate-pulse">🎂</span>
+                    </h1>
+                </div>
+
+                <!-- Animated Cake & Glow Graphic -->
+                <div class="my-8 flex justify-center">
+                    <div class="relative w-36 h-36 md:w-44 md:h-44 glass-card rounded-full flex items-center justify-center animate-float">
+                        <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-500/20 to-purple-500/20 blur-xl"></div>
+                        <i class="fa-solid fa-cake-candles text-6xl md:text-7xl text-pink-300 animate-pulse-glow relative z-10"></i>
+                    </div>
+                </div>
+
+                <p class="text-xl md:text-2xl text-pink-100 font-light mb-10">
+                    Today is all about you. 💕
+                </p>
+
+                <button onclick="nextSection(); triggerConfetti();" class="inline-flex items-center gap-3 px-8 py-4 rounded-full glass-card hover:bg-white/20 text-white font-semibold text-lg shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 border border-pink-300/40">
+                    <span>Continue</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 3 — MESSAGE FOR MY SISTER
+             ========================================== -->
+        <section id="section3" class="page-container">
+            <div class="max-w-2xl mx-auto px-4 w-full">
+                <div class="glass-card p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-2xl border border-pink-300/20">
+                    <!-- Decorative background glow inside card -->
+                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="text-center mb-8 relative z-10">
+                        <span class="text-3xl">❤️</span>
+                        <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mt-2 glow-text">
+                            For My Wonderful Sister
+                        </h2>
+                    </div>
+
+                    <div class="space-y-6 text-pink-100 text-lg md:text-xl font-light leading-relaxed text-center relative z-10">
+                        <p class="font-medium text-pink-200">
+                            Happy Birthday to my wonderful sister! 🥰
+                        </p>
+                        <p>
+                            You are not just my sister, you are also one of the most special people in my life. 💕
+                        </p>
+                        <p class="text-purple-100/90">
+                            May your life always be filled with happiness, success, love and beautiful memories. ✨
+                        </p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/10 flex flex-wrap justify-center gap-6 text-pink-300 font-medium text-base relative z-10">
+                        <span class="px-4 py-2 rounded-full glass-card">Keep smiling. 😊</span>
+                        <span class="px-4 py-2 rounded-full glass-card">Keep shining. ✨</span>
+                        <span class="px-4 py-2 rounded-full glass-card">Keep being you. 💕</span>
+                    </div>
+                </div>
+
+                <div class="text-center mt-10">
+                    <button onclick="nextSection()" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>View Our Memories</span>
+                        <i class="fa-solid fa-images"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 4 — OUR MEMORIES (PHOTO GALLERY)
+             ========================================== -->
+        <section id="section4" class="page-container">
+            <div class="max-w-5xl mx-auto px-4 w-full">
+                <div class="text-center mb-10">
+                    <span class="text-pink-300 text-sm tracking-widest uppercase">Captured Moments</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mt-2 glow-text">
+                        Our Beautiful Memories 🌸
+                    </h2>
+                    <p class="text-pink-200/80 text-sm mt-2">Click any photo to view in fullscreen</p>
+                </div>
+
+                <!-- 
+                    IMAGE SETUP COMMENT:
+                    Place your 4 images inside the 'images/' folder with the following filenames:
+                    - images/anita1.jpg
+                    - images/anita2.jpg
+                    - images/anita3.jpg
+                    - images/anita4.jpg
+                -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    
+                    <!-- Photo 1 -->
+                    <div class="glass-card glass-card-hover p-4 rounded-2xl cursor-pointer transform -rotate-2 group" onclick="openLightbox('images/anita1.jpg', 'Beautiful smile ❤️')">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-purple-950/50 relative">
+                            <img src="images/anita1.jpg" alt="Anita memory 1" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/2d1b4e/ffb5e8?text=Anita+1';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-medium"><i class="fa-solid fa-expand mr-1"></i> Click to enlarge</span>
+                            </div>
+                        </div>
+                        <p class="text-center font-serif text-pink-200 text-sm font-medium">Beautiful smile ❤️</p>
+                    </div>
+
+                    <!-- Photo 2 -->
+                    <div class="glass-card glass-card-hover p-4 rounded-2xl cursor-pointer transform rotate-1 group" onclick="openLightbox('images/anita2.jpg', 'One of my favorite memories ✨')">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-purple-950/50 relative">
+                            <img src="images/anita2.jpg" alt="Anita memory 2" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/2d1b4e/ffb5e8?text=Anita+2';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-medium"><i class="fa-solid fa-expand mr-1"></i> Click to enlarge</span>
+                            </div>
+                        </div>
+                        <p class="text-center font-serif text-pink-200 text-sm font-medium">One of my favorite memories ✨</p>
+                    </div>
+
+                    <!-- Photo 3 -->
+                    <div class="glass-card glass-card-hover p-4 rounded-2xl cursor-pointer transform -rotate-1 group" onclick="openLightbox('images/anita3.jpg', 'Always making memories 🌸')">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-purple-950/50 relative">
+                            <img src="images/anita3.jpg" alt="Anita memory 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/2d1b4e/ffb5e8?text=Anita+3';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-medium"><i class="fa-solid fa-expand mr-1"></i> Click to enlarge</span>
+                            </div>
+                        </div>
+                        <p class="text-center font-serif text-pink-200 text-sm font-medium">Always making memories 🌸</p>
+                    </div>
+
+                    <!-- Photo 4 -->
+                    <div class="glass-card glass-card-hover p-4 rounded-2xl cursor-pointer transform rotate-2 group" onclick="openLightbox('images/anita4.jpg', 'Forever special 💕')">
+                        <div class="aspect-[4/5] rounded-xl overflow-hidden mb-4 bg-purple-950/50 relative">
+                            <img src="images/anita4.jpg" alt="Anita memory 4" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='https://placehold.co/400x500/2d1b4e/ffb5e8?text=Anita+4';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                <span class="text-white text-xs font-medium"><i class="fa-solid fa-expand mr-1"></i> Click to enlarge</span>
+                            </div>
+                        </div>
+                        <p class="text-center font-serif text-pink-200 text-sm font-medium">Forever special 💕</p>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <button onclick="nextSection()" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>Birthday Wishes</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 5 — BIRTHDAY WISHES
+             ========================================== -->
+        <section id="section5" class="page-container">
+            <div class="max-w-4xl mx-auto px-4 w-full">
+                <div class="text-center mb-12">
+                    <span class="text-pink-300 text-sm tracking-widest uppercase">Heartfelt Prayers</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mt-2 glow-text">
+                        Wishes For You ✨
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                    
+                    <!-- Wish 1 -->
+                    <div class="glass-card glass-card-hover p-8 rounded-3xl relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-300 text-xl mb-4">
+                            🌸
+                        </div>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-3">HAPPINESS</h3>
+                        <p class="text-pink-100/90 text-base leading-relaxed font-light">
+                            May your days always be filled with happiness and beautiful moments that put a smile on your face.
+                        </p>
+                    </div>
+
+                    <!-- Wish 2 -->
+                    <div class="glass-card glass-card-hover p-8 rounded-3xl relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-300 text-xl mb-4">
+                            🌟
+                        </div>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-3">SUCCESS</h3>
+                        <p class="text-pink-100/90 text-base leading-relaxed font-light">
+                            May you achieve everything you dream about and make yourself proud every single step of the way.
+                        </p>
+                    </div>
+
+                    <!-- Wish 3 -->
+                    <div class="glass-card glass-card-hover p-8 rounded-3xl relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-300 text-xl mb-4">
+                            💕
+                        </div>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-3">LOVE</h3>
+                        <p class="text-pink-100/90 text-base leading-relaxed font-light">
+                            May your life always be surrounded by people who truly love, value, and care for your wonderful heart.
+                        </p>
+                    </div>
+
+                    <!-- Wish 4 -->
+                    <div class="glass-card glass-card-hover p-8 rounded-3xl relative overflow-hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-500/20 flex items-center justify-center text-pink-300 text-xl mb-4">
+                            ✨
+                        </div>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-3">MEMORIES</h3>
+                        <p class="text-pink-100/90 text-base leading-relaxed font-light">
+                            May every upcoming year bring you more unforgettable memories and countless new reasons to celebrate.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <button onclick="nextSection()" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>Why You Are Special</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 6 — WHY YOU ARE SPECIAL
+             ========================================== -->
+        <section id="section6" class="page-container">
+            <div class="max-w-4xl mx-auto px-4 w-full">
+                <div class="text-center mb-12">
+                    <span class="text-pink-300 text-sm tracking-widest uppercase">The Best Sister Ever</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mt-2 glow-text">
+                        Why Anita Is Special 💕
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                    
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-pink-500/20 flex items-center justify-center text-2xl mb-4 text-pink-300">
+                            😂
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Forever Partner in Chaos</h3>
+                        <p class="text-pink-200/80 text-sm font-light">Always down for silly jokes and endless laughter.</p>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center text-2xl mb-4 text-purple-300">
+                            ❤️
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Always Count On You</h3>
+                        <p class="text-pink-200/80 text-sm font-light">My biggest supporter and trusted confidante.</p>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-indigo-500/20 flex items-center justify-center text-2xl mb-4 text-indigo-300">
+                            🌷
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Most Precious Person</h3>
+                        <p class="text-pink-200/80 text-sm font-light">Your kind heart brings warmth to everyone around you.</p>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-pink-500/20 flex items-center justify-center text-2xl mb-4 text-pink-300">
+                            😊
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Your Smile Brightens Days</h3>
+                        <p class="text-pink-200/80 text-sm font-light">It has the magic power to make everything better instantly.</p>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center text-2xl mb-4 text-purple-300">
+                            💕
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Sister & Best Friend</h3>
+                        <p class="text-pink-200/80 text-sm font-light">Family by blood, best friends by choice for a lifetime.</p>
+                    </div>
+
+                    <div class="glass-card glass-card-hover p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-full bg-indigo-500/20 flex items-center justify-center text-2xl mb-4 text-indigo-300">
+                            ✨
+                        </div>
+                        <h3 class="font-semibold text-white text-lg mb-2">Simply Unreplaceable</h3>
+                        <p class="text-pink-200/80 text-sm font-light">There is nobody else in the world quite like you, Anita.</p>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <button onclick="nextSection()" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>Final Surprise</span>
+                        <i class="fa-solid fa-gift"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+             PAGE 7 — FINAL SURPRISE
+             ========================================== -->
+        <section id="section7" class="page-container text-center">
+            <div class="max-w-2xl mx-auto px-4">
+                <span class="text-pink-300 text-sm tracking-widest uppercase mb-4 block">The Grand Finale</span>
+                
+                <h2 class="text-4xl md:text-6xl font-serif font-bold text-white mb-6 glow-text">
+                    Happy Birthday, Anita! 🎂❤️
+                </h2>
+
+                <div class="my-8 flex justify-center">
+                    <div class="relative w-32 h-32 glass-card rounded-full flex items-center justify-center animate-bounce">
+                        <i class="fa-solid fa-heart text-6xl text-pink-400 animate-pulse"></i>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl mb-8 space-y-4 text-pink-100 text-lg md:text-xl font-light">
+                    <p>Keep smiling,<br>keep shining,<br>and always be the amazing person you are.</p>
+                    <p class="font-serif font-bold text-pink-300 text-2xl pt-2">Love you, sis! ❤️</p>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="goToSection(1); triggerConfetti();" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all duration-300">
+                        <span>Replay the Surprise</span>
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         FULLSCREEN LIGHTBOX MODAL
+         ========================================== -->
+    <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4 transition-opacity duration-300" onclick="closeLightbox()">
+        <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white text-3xl hover:text-pink-300 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img id="lightboxImg" src="" alt="Enlarged photo" class="max-h-[75vh] max-w-full rounded-2xl shadow-2xl object-contain border border-white/20">
+            <p id="lightboxCaption" class="mt-4 text-pink-200 text-xl font-serif text-center"></p>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT ENGINE
+         ========================================== -->
+    <script>
+        // --- 1. TYPING EFFECT FOR WELCOME SCREEN ---
+        const typingText = "I made something special for you...";
+        let charIndex = 0;
+        const typingElement = document.getElementById('welcomeTyping');
+
+        function typeWriter() {
+            if (charIndex < typingText.length) {
+                typingElement.innerHTML += typingText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 70);
+            }
+        }
+        window.addEventListener('load', () => {
+            typeWriter();
+            createParticles();
+        });
+
+
+        // --- 2. FLOATING BACKGROUND PARTICLES (HEARTS & SPARKLES) ---
+        function createParticles() {
+            const container = document.getElementById('particlesContainer');
+            const particleCount = 25;
+            const icons = ['fa-heart', 'fa-sparkles', 'fa-star', 'fa-circle-heart'];
+
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle text-pink-300/40';
+                
+                // Random position and timing
+                const size = Math.floor(Math.random() * 16) + 10; // 10px to 25px
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.fontSize = size + 'px';
+                p.style.animationDuration = (Math.random() * 8 + 6) + 's'; // 6s to 14s
+                p.style.animationDelay = (Math.random() * 5) + 's';
+
+                const icon = document.createElement('i');
+                icon.className = `fa-solid ${icons[Math.floor(Math.random() * icons.length)]}`;
+                p.appendChild(icon);
+
+                container.appendChild(p);
+            }
+        }
+
+
+        // --- 3. SECTION NAVIGATION ENGINE ---
+        let currentSection = 1;
+        const totalSections = 7;
+
+        function goToSection(sectionNum) {
+            if (sectionNum < 1 || sectionNum > totalSections) return;
+            currentSection = sectionNum;
+            const targetElement = document.getElementById(`section${currentSection}`);
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+            updateNavDots();
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                goToSection(currentSection);
+            } else {
+                goToSection(1);
+            }
+        }
+
+        // Update side navigation dots active state on scroll
+        const observerOptions = {
+            root: null,
+            threshold: 0.6
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    const num = parseInt(id.replace('section', ''));
+                    currentSection = num;
+                    updateNavDots();
+                }
+            });
+        }, observerOptions);
+
+        for (let i = 1; i <= totalSections; i++) {
+            const sec = document.getElementById(`section${i}`);
+            if (sec) observer.observe(sec);
+        }
+
+        function updateNavDots() {
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, index) => {
+                if (index + 1 === currentSection) {
+                    dot.classList.add('bg-pink-400', 'scale-125');
+                    dot.classList.remove('bg-white/30');
+                } else {
+                    dot.classList.remove('bg-pink-400', 'scale-125');
+                    dot.classList.add('bg-white/30');
+                }
+            });
+        }
+
+
+        // --- 4. CONFETTI EFFECT ---
+        function triggerConfetti() {
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#ffb5e8', '#dcd0ff', '#b2fef7', '#ffdfba', '#ffffff']
+            });
+        }
+
+
+        // --- 5. PHOTO LIGHTBOX ---
+        function openLightbox(imgSrc, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+
+            img.src = imgSrc;
+            cap.innerText = caption;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+
+        // --- 6. BACKGROUND MUSIC TOGGLE ---
+        let isPlaying = false;
+        const bgMusic = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicText = document.getElementById('musicText');
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                isPlaying = false;
+                musicIcon.className = "fa-solid fa-music text-sm";
+                musicText.innerText = "Play Music";
+            } else {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.className = "fa-solid fa-pause text-sm animate-bounce";
+                    musicText.innerText = "Pause Music";
+                }).catch(err => {
+                    console.log("Audio playback prevented or missing file:", err);
+                    musicText.innerText = "Music Error";
+                });
+            }
+        }
+    </script>
+</body>
+</html>
